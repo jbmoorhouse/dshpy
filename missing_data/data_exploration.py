@@ -10,7 +10,6 @@ class MissingDataAnalysis():
         self.data = data
         self.missing = self._get_null(data)
         
-        
     # ----------------------------------------------------------------------
     # Non-public methods
     
@@ -19,7 +18,6 @@ class MissingDataAnalysis():
         
         return df.loc[:, df.isnull().any()]
     
-    
     # ----------------------------------------------------------------------
     # Properities
     
@@ -27,12 +25,9 @@ class MissingDataAnalysis():
     def missing_features(self):
         f = (self.missing.shape[1] / self.data.shape[1]) * 100
         print("{}% of the features have missing data".format(int(f)))
-        
-        
-    # ----------------------------------------------------------------------
-    # Public methods 
     
-    def type_summary(self, start=None, stop=None):
+    @property
+    def type_summary(self):
         # pd.Series of the distribution of dtypes
         type_summary = self.missing.dtypes.value_counts()
         
@@ -77,7 +72,9 @@ class MissingDataAnalysis():
         ax.set_title("Missing data type summary", fontdict = {"fontsize":15})
         plt.show()
         
-        
+    # ----------------------------------------------------------------------
+    # Public methods
+    
     def quality_summary(self, 
                 start = None,
                 stop = None,
