@@ -124,8 +124,8 @@ class MissingDataAnalysis():
                 'mode_freq' : (missing == mode.iloc[0]).sum(),
                 'mode%' : (missing == mode.iloc[0]).mean(),
                 '2nd_mode' : mode.iloc[0],
-                '2nd_mode_freq' : (missing == mode.iloc[0]).sum(),
-                '2nd_mode%' : (missing == mode.iloc[0]).mean()
+                '2nd_mode_freq' : (missing == mode.iloc[1]).sum(),
+                '2nd_mode%' : (missing == mode.iloc[1]).mean()
             }
         
             return pd.DataFrame({**data, **non_metric_data}).round(2)
