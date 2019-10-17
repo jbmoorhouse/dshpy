@@ -76,23 +76,57 @@ class MissingDataAnalysis():
     # Public methods
     
     def quality_summary(self, 
+                metric = True,
                 start = None,
                 stop = None,
                 step = None,
                 precision = 2):
-        
+            
+        # Need to add logic here to check start, stop and step are valid 
         if start:
-            features = self.missing.iloc[:, start : stop : step]
+            missing = self.missing.iloc[:, start : stop : step]
         else:
-            features = self.missing
+            missing = self.missing
         
         # summary data definitions
+        # Opted to explicitly define summary statistics as opposed to 
+        # concatenating with pd.DataFrame.describe() since this is slow.
         data = {
-            "count" : features.isnull().sum().astype(int),
-            "cardinality" : features.nunique(),
-            "%_missing" : (features.isnull().mean() * 100).round(2),
-            "feature_type" : features.dtypes
+            "count" : missing.isnull().sum().astype(int),
+            "cardinality" : missing.nunique(),
+            "%_missing" : (missing.isnull().mean() * 100),
+            "feature_type" : missing.dtypes
         }
+    
+        if metric:
+            missing = missing.select_dtypes(include = np.number)
+            
+            # define the metric summary statistics
+            metric_data = {
+                'minimum' : missing.min(),
+                '25%' : missing.quantile(0.25),
+                'mean' : missing.mean(),
+                'median' : missing.median(),
+                '25%' : missing.quantile(0.75),
+                'max' : missing.max(),
+                'std. dev.' : missing.std()
+            }
+            
+            return pd.DataFrame({**data, **metric_data}).round(2)
+    
+        else:
+            missing = missing.select_dtypes(exclude = np.number)
+            mode = missing.mode()
+            
+            # define the non-metric summary statistics
+            non_metric_data = {
+                'mode' : mode.iloc[0],
+                'mode_freq' : (missing == mode.iloc[0]).sum(),
+                'mode%' : (missing == mode.iloc[0]).mean(),
+                '2nd_mode' : mode.iloc[0],
+                '2nd_mode_freq' : (missing == mode.iloc[0]).sum(),
+                '2nd_mode%' : (missing == mode.iloc[0]).mean()
+            }
         
-        return pd.DataFrame.from_dict(data)
+            return pd.DataFrame({**data, **non_metric_data}).round(2)
         
