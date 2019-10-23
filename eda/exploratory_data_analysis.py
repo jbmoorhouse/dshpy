@@ -53,3 +53,6 @@ class EDA():
     
     def zero_inflated(self):
         pass
+    
+    def bokeh_joint_plot(self):
+        pass
