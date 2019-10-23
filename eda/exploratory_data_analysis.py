@@ -56,3 +56,6 @@ class EDA():
     
     def bokeh_joint_plot(self):
         pass
+    
+    def bokeh_univariate(self):
+        pass
