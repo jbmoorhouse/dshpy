@@ -59,12 +59,9 @@ class EDA():
     def zero_inflated(self):
         pass
     
-    def bokeh_joint_plot(self):
+    def bokeh_joint_plot(self, df):
         output_notebook()
 
-        boston = load_boston()
-        df = pd.DataFrame(data = boston['data'], columns = boston['feature_names'])
-        #df = train_df
         df['x'] = df.iloc[:, 0]
         df['y'] = df.iloc[:, 1]
 
