@@ -52,7 +52,7 @@ class EDA():
         source = ColumnDataSource(df)
         p.scatter('x', 'y', source=source)
         
-        def _custom_js(source, col):
+        def bivariate_custom_js(source, col):
 
             return CustomJS(
                 args={'source' : source, 'col' : col}, code="""
@@ -62,33 +62,34 @@ class EDA():
                 """
             )
         
-        cols = df.columns.tolist()
+        cols = self.data.columns.tolist()
         x_select = Select(
             title = "Select x:",
             value = cols[0], 
-            options = cols[:-2]
+            options = cols
         )
         y_select = Select(
             title = "Select y:", 
             value = cols[1], 
-            options = cols[:-2]
+            options = cols
         )
 
         # Add the callback to the select widget. 
-        y_select.callback = _custom_js(source = source, col='y')
-        x_select.callback = _custom_js(source = source, col='x')
+        y_select.callback = bivariate_custom_js(source = source, col='y')
+        x_select.callback = bivariate_custom_js(source = source, col='x')
         
-        l = layout([ [x_select, y_select], [p]])
+        l = layout([[x_select, y_select], [p]])
         show(l)
 
         
     def univariate_plot(self, bins = 25, density = True):
         concat = self._make_univariate_dataset(bins, density)
         
+        # Change this to df.assign
         df = pd.concat(*[ list(concat) ], axis=1)
         df[['top', 'left', 'right']] = df.iloc[:, 0:3] 
         
-        source = ColumnDataSource(new_df)
+        source = ColumnDataSource(df)
         p = figure(tools='', background_fill_color="#fafafa")
         
         p.quad(
@@ -102,7 +103,7 @@ class EDA():
             alpha=0.5
         )
         
-        def _custom_js(source):
+        def univariate_custom_js(source):
             return CustomJS(
                 args={'source' : source}, code="""
                 var data = source.data;
@@ -122,6 +123,6 @@ class EDA():
             value = cols[0], 
             options = cols
         )
-        x_select.callback = _custom_js(source = source)
+        x_select.callback = univariate_custom_js(source = source)
 
         show(layout([p, x_select]))
