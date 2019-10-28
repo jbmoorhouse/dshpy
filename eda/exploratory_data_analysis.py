@@ -59,6 +59,51 @@ class EDA():
     def zero_inflated(self):
         pass
     
+    def bivariate_plot(self):
+        df = self.data.copy()
+        
+        df['x'] = df.iloc[:, 0]
+        df['y'] = df.iloc[:, 1]
+        
+        p = figure(
+            x_range = DataRange1d(range_padding=.1), 
+            y_range = DataRange1d(range_padding=.1),
+            background_fill_color = "#fafafa"
+        )
+        
+        source = ColumnDataSource(df)
+        p.scatter('x', 'y', source=source)
+        
+        # Custom javascript method for updating the plot axes.
+        def _custom_js(source, col):
+            return CustomJS(
+                args={'source' : source, 'col' : col}, code="""
+                var data = source.data;
+                data[col] = data[cb_obj.value];
+                source.change.emit();
+                """
+            )
+        
+        # Define Select box structure
+        cols = df.columns.tolist()
+        
+        x_select = Select(
+            title="Select x:", 
+            value = cols[0], 
+            options = cols[:-2]
+        )
+        
+        y_select = Select(
+            title="Select y:", 
+            value = cols[1], 
+            options = cols[:-2]
+        )
+
+        # Add the callback to the select widget. 
+        y_select.callback = _custom_js(source = source, col='y')
+        x_select.callback = _custom_js(source = source, col='x')
+
+        show(layout([[x_select, y_select], [p]]))
     
     def bokeh_univariate(self):
         pass
