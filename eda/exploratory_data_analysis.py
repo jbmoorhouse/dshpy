@@ -88,13 +88,13 @@ class EDA():
         cols = df.columns.tolist()
         
         x_select = Select(
-            title="Select x:", 
+            title = "Select x:", 
             value = cols[0], 
             options = cols[:-2]
         )
         
         y_select = Select(
-            title="Select y:", 
+            title = "Select y:", 
             value = cols[1], 
             options = cols[:-2]
         )
