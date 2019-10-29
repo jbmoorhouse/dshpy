@@ -3,7 +3,13 @@ import numpy as np
 
 from bokeh.io import show, output_notebook
 from bokeh.layouts import row, layout
-from bokeh.models import ColumnDataSource, CustomJS, DataRange1d, BoxSelectTool, LassoSelectTool
+from bokeh.models import (
+    ColumnDataSource, 
+    CustomJS, 
+    DataRange1d, 
+    BoxSelectTool, 
+    LassoSelectTool
+)
 from bokeh.plotting import figure, curdoc
 from bokeh.models.widgets import Select
 
@@ -17,7 +23,7 @@ class EDA():
     def __init__(self, data):
         self.data = data
     
-    def _make_bivariate_dataset(self):
+    def _bivariate_dataset(self):
         df = self.data.copy()
         
         df['x'] = df.iloc[:, 0]
@@ -25,7 +31,7 @@ class EDA():
         
         return df
     
-    def _make_univariate_dataset(self, bins, density):
+    def _univariate_dataset(self, bins, density):
         df = self.data.copy()
         
         for col in df:
@@ -36,12 +42,43 @@ class EDA():
                 "left_" + str(col) : edges[:-1],
                 "right_" + str(col) : edges[1:]
             })
+            
+    def _scatter_matrix_dataset(self):
+        pass    
+        
+    def _make_grid(n_cols):
+        grid_size = range(n_cols)
+
+        for i, (x, y) in enumerate(product(grid_size, grid_size)):
+
+            p = figure(
+                x_range = DataRange1d(range_padding=0.1), 
+                y_range = DataRange1d(range_padding=0.1)
+            )
+            p.scatter('v' + str(y), 'v' + str(x), source=source)
+
+            #Define show axis conditions
+            cond_one, cond_two = (
+                i % n_cols == 0, x == n_cols - 1
+            )
+
+            # If both axis conditions are valis
+            if cond_one: 
+                p.xaxis.visible = True if cond_two else False 
+            elif cond_two:
+                p.yaxis.visible = False
+            else:
+                p.yaxis.visible = p.xaxis.visible =  False
+
+            p.xgrid.grid_line_color = p.ygrid.grid_line_color = None
+
+            yield p
         
     # ----------------------------------------------------------------------
     # Plotting
     
     def bivariate_plot(self):
-        df = self._make_bivariate_dataset()
+        df = self._bivariate_dataset()
         
         p = figure(
             x_range = DataRange1d(range_padding=.1), 
@@ -83,7 +120,7 @@ class EDA():
 
         
     def univariate_plot(self, bins = 25, density = True):
-        concat = self._make_univariate_dataset(bins, density)
+        concat = self._univariate_dataset(bins, density)
         
         # Change this to df.assign
         df = pd.concat(*[ list(concat) ], axis=1)
