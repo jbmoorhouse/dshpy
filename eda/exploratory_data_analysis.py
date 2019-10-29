@@ -126,3 +126,8 @@ class EDA():
         x_select.callback = univariate_custom_js(source = source)
 
         show(layout([p, x_select]))
+        
+        
+    def scatter_matrix(self):
+        pass
+    
