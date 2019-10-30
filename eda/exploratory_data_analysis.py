@@ -46,33 +46,7 @@ class EDA():
     def _scatter_matrix_dataset(self):
         pass    
         
-    def _make_grid(n_cols):
-        grid_size = range(n_cols)
-
-        for i, (x, y) in enumerate(product(grid_size, grid_size)):
-
-            p = figure(
-                x_range = DataRange1d(range_padding=0.1), 
-                y_range = DataRange1d(range_padding=0.1)
-            )
-            p.scatter('v' + str(y), 'v' + str(x), source=source)
-
-            #Define show axis conditions
-            cond_one, cond_two = (
-                i % n_cols == 0, x == n_cols - 1
-            )
-
-            # If both axis conditions are valis
-            if cond_one: 
-                p.xaxis.visible = True if cond_two else False 
-            elif cond_two:
-                p.yaxis.visible = False
-            else:
-                p.yaxis.visible = p.xaxis.visible =  False
-
-            p.xgrid.grid_line_color = p.ygrid.grid_line_color = None
-
-            yield p
+    
         
     # ----------------------------------------------------------------------
     # Plotting
@@ -168,3 +142,86 @@ class EDA():
     def scatter_matrix(self):
         pass
     
+    
+
+
+boston = load_boston()
+df = pd.DataFrame(data = boston['data'], columns = boston['feature_names'])
+
+n_cols = 6
+
+def _make_grid(n_cols):    
+    temp_col_prefix = 'v'
+    source = ColumnDataSource(
+        df.assign(
+            **{temp_col_prefix + str(i) : df.iloc[:, i] for i in range(n_cols - 1)}
+        )
+    )
+    
+    n_cols -= 1
+    grid_size = range(n_cols)
+    cols = df.columns.to_list()
+    cols_iterator = iter(cols)
+    
+    for i, (x, y) in enumerate(product(grid_size, grid_size)):
+        
+        p = figure(
+            x_range = DataRange1d(range_padding=0.1), 
+            y_range = DataRange1d(range_padding=0.1)
+        )
+        p.scatter('v' + str(y), 'v' + str(x), source=source)
+        
+        #Define show axis conditions
+        cond_one, cond_two = i % n_cols == 0, x == n_cols - 1
+        
+        # If both axis conditions are valid
+        if cond_one: 
+            p.xaxis.visible = True if cond_two else False 
+            
+            yield Select(
+                title="y_feature", 
+                value = next(cols_iterator), 
+                options=cols, 
+                width = 100
+            )
+            
+        elif cond_two:
+            p.yaxis.visible = False
+        else:
+            p.yaxis.visible = p.xaxis.visible =  False
+            
+        p.xgrid.grid_line_color = p.ygrid.grid_line_color = None
+        
+        yield p
+        
+    for i in range(n_cols):
+        if i == 0:
+            yield None
+        
+        s = Select(title="x_feature", value = cols[i], options=cols, width = 175)
+        # Once None has been yielded for the first
+        def x_custom_js(source, i):
+            return CustomJS(
+                args={'source' : source, 'i' : i}, code="""
+                var data = source.data;
+                var col = i;
+
+                data['v'.concat(col)] = data[cb_obj.value];
+
+                source.change.emit();
+                """
+            )
+            
+        s.callback = x_custom_js(source = source, i = i)
+        
+        yield s
+   
+
+l = gridplot(
+    list(_make_grid(n_cols)), 
+    ncols = n_cols, 
+    plot_width=175, 
+    plot_height=175
+)
+
+show(l)
