@@ -28,12 +28,12 @@ class EDA():
     def _bivariate_dataset(self):
         df = self.data.copy()
         
-        df['x'] = df.iloc[:, 0]
-        df['y'] = df.iloc[:, 1]
-        
-        return df
+        return df.assign(
+            x = df.iloc[:, 0],
+            y = df.iloc[:, 1]
+        )
     
-    def _univariate_dataset(self, bins, density):
+    def _univariate_datasets(self, bins, density):
         df = self.data.copy()
         
         for col in df:
@@ -95,10 +95,10 @@ class EDA():
 
         
     def univariate_plot(self, bins = 25, density = True):
-        concat = self._univariate_dataset(bins, density)
+        objs = self._univariate_datasets(bins, density)
         
         # Change this to df.assign
-        df = pd.concat(*[ list(concat) ], axis=1)
+        df = pd.concat(*[objs], axis=1)
         df[['top', 'left', 'right']] = df.iloc[:, 0:3] 
         
         source = ColumnDataSource(df)
@@ -151,7 +151,6 @@ class EDA():
 
             grid_size = range(n_cols)
             cols = df.columns.to_list()
-            cols_iterator = iter(cols)
 
             for i, (x, y) in enumerate(product(grid_size, grid_size)):
 
