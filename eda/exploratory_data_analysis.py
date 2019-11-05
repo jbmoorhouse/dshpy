@@ -1,8 +1,10 @@
 import pandas as pd
 import numpy as np
 
+from itertools import product
+
 from bokeh.io import show, output_notebook
-from bokeh.layouts import row, layout
+from bokeh.layouts import row, layout, gridplot
 from bokeh.models import (
     ColumnDataSource, 
     CustomJS, 
@@ -118,11 +120,9 @@ class EDA():
                 args={'source' : source}, code="""
                 var data = source.data;
                 var prefix = cb_obj.value;
-
                 data['top'] = data['top_'.concat(prefix)];
                 data['left'] = data['left_'.concat(prefix)];
                 data['right'] = data['right_'.concat(prefix)];
-
                 source.change.emit();
                 """
             )
@@ -138,9 +138,11 @@ class EDA():
         show(layout([p, x_select]))
         
         
-    def scatter_matrix(n_cols):
+    def scatter_matrix(self, n_cols):
     
         def _make_plot(n_cols):
+            df = self.data
+            
             source = ColumnDataSource(
                 df.assign(**{
                         'feature_{}'.format(i) : df.iloc[:, i] 
@@ -157,7 +159,8 @@ class EDA():
                     x_range = DataRange1d(range_padding=0.1), 
                     y_range = DataRange1d(range_padding=0.1),
                     plot_width = 175,
-                    plot_height = 175
+                    plot_height = 175,
+                    output_backend="webgl"
                 )
                 p.scatter(
                     'feature_{}'.format(y), 
@@ -225,7 +228,3 @@ class EDA():
 
         l = gridplot(list(_make_plot(n_cols)), ncols = n_cols)
         show(l)
-    
-    
-
-
