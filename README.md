@@ -1,6 +1,6 @@
 # dshpy: **d**ata **s**cience **h**elper (in **py**thon)
 
-**dshpy** is a Python package which includes a series of tools to assist the early stages of data exploration in a typical data science workflow. dshpy provide users with a comprehenisve collection of intervative visualisation tools, leveraging the power of Pandas and Bokeh to make the initial stages of data exploration easier.
+**dshpy** is a Python package which includes a series of tools to assist the early stages of data exploration in a typical data science workflow. dshpy provide users with a comprehenisve collection of intervative visualisation tools, leveraging the power of [Pandas](https://github.com/pandas-dev/pandas) and [Bokeh](https://github.com/bokeh/bokeh) to make the initial stages of data exploration easier.
 
 ## Warning
 
