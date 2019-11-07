@@ -16,7 +16,7 @@ dshpy is in the early development stages. As a result, documentation is currentl
 * Interactive grouping capabilities (similar to the `hue` parameter in other plotting libraries)
 * Visualisation of principal components 
 
-License
+## License
 
 [MIT License](https://opensource.org/licenses/MIT)
 
