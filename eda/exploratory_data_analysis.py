@@ -1,3 +1,13 @@
+"""
+This module includes interactive plotting capabilites, suitable for the early 
+stages of the exploratory data analysis phase of the data science workflow.
+"""
+
+# Authors : Joseph Moorhouse
+#
+# Licence MIT
+
+
 import pandas as pd
 import numpy as np
 
@@ -15,15 +25,25 @@ from bokeh.models import (
 from bokeh.plotting import figure, curdoc
 from bokeh.models.widgets import Select
 
+
+# =============================================================================
+# Exploratory Data Analysis 
+# =============================================================================
+
+
 class EDA():
     
     output_notebook()
      
-    # ----------------------------------------------------------------------
+    # -------------------------------------------------------------------------
     # Constructors
     
     def __init__(self, data):
         self.data = data
+       
+    
+    # -------------------------------------------------------------------------
+    # Data structure modifications   
     
     def _bivariate_dataset(self):
         df = self.data.copy()
@@ -43,7 +63,7 @@ class EDA():
             })
    
         
-    # ----------------------------------------------------------------------
+    # -------------------------------------------------------------------------
     # Plotting
     
     def bivariate_plot(self):
