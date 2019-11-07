@@ -28,10 +28,7 @@ class EDA():
     def _bivariate_dataset(self):
         df = self.data.copy()
         
-        return df.assign(
-            x = df.iloc[:, 0],
-            y = df.iloc[:, 1]
-        )
+        return df.assign( x = df.iloc[:, 0], y = df.iloc[:, 1] )
     
     def _univariate_datasets(self, bins, density):
         df = self.data.copy()
@@ -44,10 +41,7 @@ class EDA():
                 "left_" + str(col) : edges[:-1],
                 "right_" + str(col) : edges[1:]
             })
-            
-    def _scatter_matrix_dataset(self):
-        pass    
-        
+   
         
     # ----------------------------------------------------------------------
     # Plotting
