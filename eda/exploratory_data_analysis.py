@@ -32,6 +32,32 @@ from bokeh.models.widgets import Select
 
 
 class EDA():
+    """
+    The EDA object is a container for a pandas data structure. EDA provides a 
+    collection of interactive data analysis tools, suitable for the early
+    stages of the data science workflow.
+    
+    Parameters
+    ----------
+    data : DataFrame
+        Pandas dataframe containing input data to a data science workflow
+        
+    Examples
+    --------
+    
+    Construct a demonstration dataset from the Scikit-Learn toy dataset 
+    
+    >>> from sklearn.datasets import load_iris
+    >>> import pandas as pd
+    ...
+    >>> iris = load_iris()
+    >>> df = pd.DataFrame(data = iris.data, columns = iris.feature_names)
+    
+    Instantiate the EDA object with the toy dataset
+    
+    >>> eda = EDA(df)
+    
+    """
     
     output_notebook()
      
@@ -50,7 +76,7 @@ class EDA():
         
         return df.assign( x = df.iloc[:, 0], y = df.iloc[:, 1] )
     
-    def _univariate_datasets(self, bins, density):
+    def _univariate_dataset(self, bins, density):
         df = self.data.copy()
         
         for col in df:
@@ -109,7 +135,7 @@ class EDA():
 
         
     def univariate_plot(self, bins = 25, density = True):
-        objs = self._univariate_datasets(bins, density)
+        objs = self._univariate_dataset(bins, density)
         
         # Change this to df.assign
         df = pd.concat(*[objs], axis=1)
